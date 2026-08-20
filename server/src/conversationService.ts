@@ -85,6 +85,7 @@ export async function addMessage(
   try {
     replyContent = await aiService.generateReply(history, content);
   } catch (err) {
+    console.error("[leo-ai-chatbot-server] AI reply failed:", err);
     replyContent = "Sorry, I couldn't generate a response right now. Please try again in a moment.";
   }
 

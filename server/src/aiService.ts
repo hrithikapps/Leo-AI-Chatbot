@@ -29,7 +29,7 @@ class GroqAIService implements AIService {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.apiKey}`,
       },
-      body: JSON.stringify({ model: this.model, messages }),
+      body: JSON.stringify({ model: this.model, messages, reasoning_format: "hidden" }),
     });
 
     if (!res.ok) {
@@ -46,7 +46,7 @@ class GroqAIService implements AIService {
 
 function buildAIService(): AIService {
   if (process.env.AI_PROVIDER === "groq" && process.env.GROQ_API_KEY) {
-    return new GroqAIService(process.env.GROQ_API_KEY, process.env.GROQ_MODEL ?? "qwen/qwen3-32b");
+    return new GroqAIService(process.env.GROQ_API_KEY, process.env.GROQ_MODEL ?? "qwen/qwen3.6-27b");
   }
   return new StubAIService();
 }
