@@ -46,7 +46,7 @@ export function buildPanelSrcDoc(config: LeoAIChatbotConfig): string {
   .search-box input { width: 100%; font-size: 13px; padding: 8px 10px; border: 1px solid #d0d5dd; border-radius: 6px; }
 
   .faq-empty { padding: 14px; font-size: 13px; color: #98a2b3; }
-  .faq-answer { padding: 14px; font-size: 13px; line-height: 1.5; color: #344054; }
+  .faq-answer { padding: 14px; font-size: 13px; line-height: 1.5; color: #344054; white-space: pre-wrap; }
   .faq-question { padding: 4px 14px 0; font-size: 15px; font-weight: 700; }
 
   #messages { flex: 1; overflow-y: auto; padding: 12px 12px; display: flex; flex-direction: column; gap: 8px; }

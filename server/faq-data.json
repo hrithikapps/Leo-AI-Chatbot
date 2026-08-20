@@ -1,7 +1,42 @@
 [
   {
-    "question": "Example: How do I reset my password?",
-    "answer": "This is placeholder FAQ content. Replace the entries in this file with real Mojro FAQ content, then run `npm run seed:faqs` to load them into the database.",
-    "category": "example"
+    "question": "Why Mojro?",
+    "answer": "Mojro helps you to transport your goods efficiently. Its features help you manage your logistics operations by creating plans, assigning trips, and tracking trips.\n\n- Builds smarter supply chains through faster and more efficient decision-making.\n- 6D optimization optimizes cost, volume, weight, time, distance and activity.\n- Its pre-built constraints help create efficient route plans.\n- Geocoder helps businesses identify the exact delivery spot.\n- Eliminates free space in resources and maximizes vehicle utilization.\n- Offers 3D visualization which enables the best decisions on packing and loading.",
+    "category": "Self Service Portal"
+  },
+  {
+    "question": "What is Logistics Platform?",
+    "answer": "A Logistics Platform is a software-based solution that enables companies to manage and optimize their supply chain and logistics operations.",
+    "category": "Self Service Portal"
+  },
+  {
+    "question": "What is Mojro Shipper Platform?",
+    "answer": "Mojro Shipper is a web application which enables users to plan and manage their logistics operations. It allows users to create plans, assign trips, track the trips, and download reports for analysis.\n\nTo use the Mojro Shipper platform, a user must create an account with Mojro. A username and password will be given to the user after account creation.\n\nURL: https://shipper.mojro.com/login/\n\nUse the given login credentials to use the platform.",
+    "category": "Self Service Portal"
+  },
+  {
+    "question": "What Configurations/Setup is required before I get started?",
+    "answer": "After logging into the platform, there is a section called \"Masters\" where you will see all the options including addresses, geofence, SKU, vehicles and drivers.\n\nTo create a plan, all the masters should be configured:\n- All pickup and delivery locations should be added under the Address master.\n- SKUs you want to transport should be added under the SKU master.\n- The Vehicle master has information on all vehicles. You can assign a driver to a vehicle.\n- The Driver master contains all driver information.\n\nYou can add these masters in two ways:\n1. Click the \"Add New\" button in each master and fill in the mandatory fields.\n2. Do a bulk upload by downloading the order template and filling it in.\n\nThere are also 200+ configurable constraints in the system based on ground reality and user input.",
+    "category": "Self Service Portal"
+  },
+  {
+    "question": "Adding a New Driver",
+    "answer": "Overview: This article explains how to add a new driver account through the Shipper Web or Mobile Application, including mandatory information, required documents, and important considerations.\n\nKey information requirements:\n- Driver Name — Optional (recommended for better visibility)\n- Mobile Number — Mandatory\n- Email ID — Optional\n- Date of Birth — Optional\n- Document scanned copy — Optional\n\nPre-conditions:\n- User must be signed in to the Shipper Web.\n- User should have the driver's valid mobile number and required documents ready.\n\nSteps:\n1. Log in to Shipper Portal, select Masters from the left menu, choose Drivers from the sub-menu. The system displays the list of existing drivers.\n2. Click \"Add New\". Fill in driver details (name, mobile number, email, date of birth) and upload the scanned document. Click \"Save Drivers\".\n\nNote: Once a driver is mapped to a mobile number, the number cannot be modified without contacting Mojro Support at support@mojro.com. If a driver changes their mobile number, the existing account must be deactivated first, then a new driver account created with the new number. The mobile number must be valid and active since login credentials are sent via SMS.\n\nTroubleshooting:\n- Unable to save driver details — verify all mandatory fields are filled correctly.\n- Document upload failing — ensure the scanned copy is in a supported format and within size limits.\n- Driver not receiving SMS — confirm the entered mobile number is valid and active.\n- Duplicate mobile number error — check if the mobile number is already mapped to another driver account.\n- Unable to change the driver's mobile number — contact Mojro Support at support@mojro.com.",
+    "category": "Self Service Portal"
+  },
+  {
+    "question": "How to Login to Driver Mobile App?",
+    "answer": "Purpose: Allows drivers to use the Mojro Partner App to view and execute an assigned trip, navigate trips, update POD, and view trip summaries.\n\nKey requirements:\n- App downloaded from Play Store — Mandatory\n- Login ID (mobile number) — Mandatory\n- Login password — Mandatory\n\nDevice requirements: Supported SDK KitKat 4.4–Oreo 8.0, 1GB+ RAM, 3000 mAh battery, high-accuracy GPS, Google Maps/Camera/Gallery installed, 1GB+ data (Driver App ~300MB + Google Services ~400MB).\n\nPre-condition: Available only for users whose account has been created in the Driver Management section. The driver's mobile receives an SMS with login credentials; search and download the Mojro Partner app from the Play Store.\n\nSteps:\n1. Open the Mojro Partner app (Home > Apps > Mojro Partner app) and allow the requested permissions (camera, calls, location, contacts, media, SMS).\n2. Enter your mobile number and the PIN received to log in.\n3. On successful login, switch on device location to see the dashboard.\n\nKey considerations: Once a driver is mapped to a mobile number, it cannot be changed without Technical Help Desk support — a new account must be created after deactivating the old one. If the SMS isn't received, contact the Technical Help Desk. The device requirements above are mandatory.",
+    "category": "Self Service Portal"
+  },
+  {
+    "question": "How to change the language of the driver app?",
+    "answer": "Purpose: The Mojro Partner App supports multiple languages for a more user-friendly experience.\n\nSupported languages: English, Kannada, Hindi, Telugu, Malayalam, Marathi.\n\nPre-conditions: Mojro Partner App installed and driver successfully logged in.\n\nSteps:\n1. Open the menu (the three-line/burger icon) at the top-left of the app.\n2. Tap \"Language\", select your preferred language (e.g. Hindi), then tap \"Ok\". The dashboard content updates to the selected language.\n\nKey consideration: The driver app must be installed and logged in. If your preferred language isn't in the list, contact the Technical Help Desk.",
+    "category": "Self Service Portal"
+  },
+  {
+    "question": "Estimating using Excel Order.",
+    "answer": "Purpose: Used when SKU-level information is available for planning.\n\nKey requirements: SKU master with package weights and volumes (mandatory); customer shipment data — location-wise SKU shipped with quantity (mandatory).\n\nPre-condition: SKU master configured (either as packages or part of the SKU master).\n\nSteps:\n1. Click \"Excel Plan\" in the Planning section (Mojro Shipper > Planning > Excel Plan).\n2. Review the order Excel file to upload.\n3. Select the file to upload.\n4. Click \"Submit\".\n5. Review at the Estimate stage.\n6. Click \"Estimate\" once reviewed.\n7. Wait a minute or two, then click the semi-circular arrow to proceed. Estimation is complete.\n\nKey considerations: You can review and edit a plan before confirmation using the \"Back\" button. Estimated plans are available in the \"All Plans\" section under the \"Estimated\" stage for later review.",
+    "category": "Self Service Portal"
   }
 ]
