@@ -1,0 +1,16 @@
+{
+  "name": "@leo-ai/chatbot-sdk",
+  "version": "0.1.0",
+  "description": "LEO AI Chatbot SDK — framework-independent launcher/shell, Phase 1",
+  "main": "dist/leo-ai-chatbot.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "tsup": "^8.3.5"
+  }
+}
