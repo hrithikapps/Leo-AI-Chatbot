@@ -3,6 +3,7 @@ import * as url from "node:url";
 import { addMessage, createConversation, getConversation } from "./conversationService";
 import { listFaqs, searchFaqs } from "./faqService";
 import { createTicket, getTicket, listTickets, updateTicket } from "./ticketService";
+import { isValidEmail, sendTicketAssignedEmail } from "./emailService";
 
 const PORT = Number(process.env.PORT ?? 4000);
 
@@ -177,6 +178,8 @@ const server = http.createServer((req, res) => {
           sendJson(res, 400, { error: "tier must be one of: " + validTier.join(", ") });
           return;
         }
+
+        const before = await getTicket(ticketMatch[1]);
         const ticket = await updateTicket(ticketMatch[1], {
           status: body.status,
           tier: body.tier,
@@ -187,6 +190,13 @@ const server = http.createServer((req, res) => {
           return;
         }
         sendJson(res, 200, { ticket });
+
+        const newAssignee = typeof body.assignee === "string" ? body.assignee : null;
+        if (newAssignee && newAssignee !== before?.assignee && isValidEmail(newAssignee)) {
+          sendTicketAssignedEmail(newAssignee, ticket).catch((err) => {
+            console.error("[leo-ai-chatbot-server] assignment email failed:", err);
+          });
+        }
       })
       .catch((err) => sendJson(res, 400, { error: err.message }));
     return;
