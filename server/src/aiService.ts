@@ -1,7 +1,7 @@
 import type { Message } from "./conversationService";
 
 export interface AIService {
-  generateReply(history: Message[], newMessage: string): Promise<string>;
+  generateReply(history: Message[], newMessage: string, knowledgeContext?: string): Promise<string>;
 }
 
 class StubAIService implements AIService {
@@ -16,9 +16,13 @@ class GroqAIService implements AIService {
     private model: string
   ) {}
 
-  async generateReply(history: Message[], newMessage: string): Promise<string> {
+  async generateReply(history: Message[], newMessage: string, knowledgeContext?: string): Promise<string> {
+    const systemContent = knowledgeContext
+      ? `You are the LEO AI assistant for Mojro applications. Be concise and helpful. Answer using the following Mojro FAQ knowledge when it's relevant to the question; if the knowledge base doesn't cover the question, say so rather than guessing at Mojro-specific behavior.\n\n${knowledgeContext}`
+      : "You are the LEO AI assistant for Mojro applications. Be concise and helpful.";
+
     const messages = [
-      { role: "system", content: "You are the LEO AI assistant for Mojro applications. Be concise and helpful." },
+      { role: "system", content: systemContent },
       ...history.map((m) => ({ role: m.role, content: m.content })),
       { role: "user", content: newMessage },
     ];

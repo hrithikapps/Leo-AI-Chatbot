@@ -1,5 +1,6 @@
 import { pool } from "./db";
 import { aiService } from "./aiService";
+import { listFaqs } from "./faqService";
 
 export interface Conversation {
   id: string;
@@ -83,7 +84,10 @@ export async function addMessage(
 
   let replyContent: string;
   try {
-    replyContent = await aiService.generateReply(history, content);
+    const faqs = await listFaqs();
+    const knowledgeContext =
+      faqs.length > 0 ? faqs.map((faq) => `Q: ${faq.question}\nA: ${faq.answer}`).join("\n\n") : undefined;
+    replyContent = await aiService.generateReply(history, content, knowledgeContext);
   } catch (err) {
     console.error("[leo-ai-chatbot-server] AI reply failed:", err);
     replyContent = "Sorry, I couldn't generate a response right now. Please try again in a moment.";
