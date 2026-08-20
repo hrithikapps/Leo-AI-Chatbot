@@ -1,0 +1,16 @@
+{
+  "name": "@leo-ai/chatbot-server",
+  "version": "0.1.0",
+  "description": "LEO AI Chatbot backend — Phase 1: health check only",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "@types/node": "^20.16.11"
+  }
+}
