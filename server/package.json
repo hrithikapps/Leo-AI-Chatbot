@@ -6,9 +6,12 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node --env-file=.env dist/index.js",
-    "migrate": "node --env-file=.env dist/migrate.js",
-    "seed:faqs": "node --env-file=.env dist/seedFaqs.js"
+    "start": "node dist/index.js",
+    "start:local": "node --env-file=.env dist/index.js",
+    "migrate": "node dist/migrate.js",
+    "migrate:local": "node --env-file=.env dist/migrate.js",
+    "seed:faqs": "node dist/seedFaqs.js",
+    "seed:faqs:local": "node --env-file=.env dist/seedFaqs.js"
   },
   "license": "UNLICENSED",
   "devDependencies": {
