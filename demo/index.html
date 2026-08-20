@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>LEO AI Chatbot — Phase 1 Demo</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 40px; color: #1a1a1a; }
+  h1 { font-size: 20px; }
+  p { font-size: 14px; color: #444; max-width: 600px; }
+  code { background: #f2f2f2; padding: 2px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+  <h1>LEO AI Chatbot — Phase 1 Demo</h1>
+  <p>
+    This is a plain HTML page (no React, no build step) that loads the LEO AI
+    Chatbot SDK from a local build and initializes it. Open the browser
+    console to see the backend health-check result. Click the
+    <strong>Chat</strong> button in the bottom-right corner to open/close the
+    placeholder panel.
+  </p>
+  <p>
+    Backend expected at <code>http://localhost:4000</code> — start it with
+    <code>npm run build &amp;&amp; npm start</code> inside <code>server/</code>.
+  </p>
+
+  <script src="../sdk/dist/leo-ai-chatbot.js"></script>
+  <script>
+    LeoAIChatbot.init({
+      backendUrl: "http://localhost:4000",
+      application: "demo",
+      user: {
+        id: "demo-user-1",
+        name: "Demo User",
+        email: "demo@example.com"
+      }
+    });
+  </script>
+</body>
+</html>
