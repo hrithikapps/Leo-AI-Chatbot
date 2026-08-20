@@ -1,6 +1,6 @@
 {
   "name": "@hrithikapps/chatbot-react",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "React wrapper for the LEO AI Chatbot SDK",
   "files": ["dist"],
   "main": "dist/index.cjs",
