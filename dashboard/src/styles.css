@@ -1,0 +1,124 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #f4f5f7;
+  color: #1f2d3d;
+}
+
+.login-screen {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-card {
+  background: #fff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 320px;
+  text-align: center;
+}
+.login-card h1 { font-size: 18px; margin: 0 0 2px; }
+.login-card p { font-size: 13px; color: #667085; margin: 0 0 20px; }
+.login-card input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+.login-card button {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  background: #c9701f;
+  color: #fff;
+  cursor: pointer;
+}
+
+.dashboard { max-width: 1000px; margin: 0 auto; padding: 24px; }
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.dashboard-header h1 { font-size: 20px; margin: 0; }
+.link-button {
+  background: none;
+  border: none;
+  color: #c9701f;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.error-banner {
+  background: #fef2f2;
+  color: #b42318;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.loading, .empty { font-size: 13px; color: #667085; }
+
+.ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+.ticket-table th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #667085;
+  padding: 10px 14px;
+  border-bottom: 1px solid #eef0f3;
+}
+.ticket-table td { padding: 12px 14px; font-size: 13px; border-bottom: 1px solid #eef0f3; }
+.ticket-row { cursor: pointer; }
+.ticket-row:hover { background: #fafafa; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-open { background: #fef3c7; color: #92400e; }
+.badge-in_progress { background: #dbeafe; color: #1e40af; }
+.badge-closed { background: #dcfce7; color: #166534; }
+
+.ticket-detail-row td { background: #fafbfc; }
+.ticket-detail { padding: 4px 0 12px; }
+.ticket-detail .description { font-size: 13px; color: #344054; margin: 0 0 12px; white-space: pre-wrap; }
+.edit-fields { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+.edit-fields label { display: flex; flex-direction: column; font-size: 11px; color: #667085; gap: 4px; }
+.edit-fields select, .edit-fields input {
+  font-size: 13px;
+  padding: 6px 8px;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+}
+.edit-fields button {
+  font-size: 13px;
+  padding: 7px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #c9701f;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.edit-fields button:disabled { background: #98a2b3; cursor: not-allowed; }

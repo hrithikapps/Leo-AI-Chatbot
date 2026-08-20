@@ -2,7 +2,7 @@ import * as http from "node:http";
 import * as url from "node:url";
 import { addMessage, createConversation, getConversation } from "./conversationService";
 import { listFaqs, searchFaqs } from "./faqService";
-import { createTicket, getTicket } from "./ticketService";
+import { createTicket, getTicket, listTickets, updateTicket } from "./ticketService";
 
 const PORT = Number(process.env.PORT ?? 4000);
 
@@ -37,13 +37,20 @@ const conversationByIdRoute = new RegExp(`^/conversations/(${UUID_SEGMENT})$`);
 const messagesRoute = new RegExp(`^/conversations/(${UUID_SEGMENT})/messages$`);
 const ticketByIdRoute = new RegExp(`^/tickets/(${UUID_SEGMENT})$`);
 
+function isAdminAuthorized(req: http.IncomingMessage): boolean {
+  const adminKey = process.env.ADMIN_API_KEY;
+  if (!adminKey) return false;
+  const header = req.headers.authorization ?? "";
+  return header === `Bearer ${adminKey}`;
+}
+
 const server = http.createServer((req, res) => {
   // Dev-only CORS: Phase 1 demo loads the SDK from a file:// / static origin and
   // needs to reach this backend cross-origin. No credentials or sensitive data
   // are exposed by this route. Revisit before any non-local deployment.
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,OPTIONS");
 
   if (req.method === "OPTIONS") {
     res.writeHead(204);
@@ -128,6 +135,17 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (req.method === "GET" && req.url === "/tickets") {
+    if (!isAdminAuthorized(req)) {
+      sendJson(res, 401, { error: "unauthorized" });
+      return;
+    }
+    listTickets()
+      .then((tickets) => sendJson(res, 200, { tickets }))
+      .catch((err) => sendJson(res, 500, { error: err.message }));
+    return;
+  }
+
   const ticketMatch = req.url?.match(ticketByIdRoute);
   if (req.method === "GET" && ticketMatch) {
     getTicket(ticketMatch[1])
@@ -139,6 +157,38 @@ const server = http.createServer((req, res) => {
         sendJson(res, 200, { ticket });
       })
       .catch((err) => sendJson(res, 500, { error: err.message }));
+    return;
+  }
+
+  if (req.method === "PATCH" && ticketMatch) {
+    if (!isAdminAuthorized(req)) {
+      sendJson(res, 401, { error: "unauthorized" });
+      return;
+    }
+    readJsonBody(req)
+      .then(async (body) => {
+        const validStatus = ["open", "in_progress", "closed"];
+        const validTier = ["L1", "L2", "L3"];
+        if (body.status !== undefined && !validStatus.includes(body.status)) {
+          sendJson(res, 400, { error: "status must be one of: " + validStatus.join(", ") });
+          return;
+        }
+        if (body.tier !== undefined && !validTier.includes(body.tier)) {
+          sendJson(res, 400, { error: "tier must be one of: " + validTier.join(", ") });
+          return;
+        }
+        const ticket = await updateTicket(ticketMatch[1], {
+          status: body.status,
+          tier: body.tier,
+          assignee: typeof body.assignee === "string" ? body.assignee : undefined,
+        });
+        if (!ticket) {
+          sendJson(res, 404, { error: "ticket not found" });
+          return;
+        }
+        sendJson(res, 200, { ticket });
+      })
+      .catch((err) => sendJson(res, 400, { error: err.message }));
     return;
   }
 

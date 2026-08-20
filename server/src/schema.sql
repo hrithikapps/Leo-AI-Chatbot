@@ -33,3 +33,9 @@ create table if not exists tickets (
   status            text not null default 'open' check (status in ('open','closed')),
   created_at        timestamptz not null default now()
 );
+
+alter table tickets add column if not exists tier text null check (tier in ('L1','L2','L3'));
+alter table tickets add column if not exists assignee text null;
+
+alter table tickets drop constraint if exists tickets_status_check;
+alter table tickets add constraint tickets_status_check check (status in ('open','in_progress','closed'));
