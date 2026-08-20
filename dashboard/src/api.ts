@@ -13,6 +13,14 @@ export interface Ticket {
   tier: TicketTier | null;
   assignee: string | null;
   createdAt: string;
+  resolvedAt: string | null;
+}
+
+export interface LeaderboardEntry {
+  assignee: string;
+  ticketsResolved: number;
+  totalPoints: number;
+  avgPoints: number;
 }
 
 export class UnauthorizedError extends Error {}
@@ -34,6 +42,13 @@ export async function listTickets(adminKey: string): Promise<Ticket[]> {
   if (!res.ok) throw new Error(`status ${res.status}`);
   const data = await res.json();
   return data.tickets;
+}
+
+export async function getLeaderboard(adminKey: string): Promise<LeaderboardEntry[]> {
+  const res = await adminFetch(adminKey, "/leaderboard");
+  if (!res.ok) throw new Error(`status ${res.status}`);
+  const data = await res.json();
+  return data.leaderboard;
 }
 
 export async function updateTicket(

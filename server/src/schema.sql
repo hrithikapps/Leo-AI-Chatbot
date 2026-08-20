@@ -39,3 +39,6 @@ alter table tickets add column if not exists assignee text null;
 
 alter table tickets drop constraint if exists tickets_status_check;
 alter table tickets add constraint tickets_status_check check (status in ('open','in_progress','closed'));
+
+alter table tickets add column if not exists resolved_at timestamptz null;
+alter table tickets add column if not exists sla_breach_notified boolean not null default false;

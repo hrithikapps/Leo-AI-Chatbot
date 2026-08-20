@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import {
+  getLeaderboard,
   listTickets,
   updateTicket,
   UnauthorizedError,
+  type LeaderboardEntry,
   type Ticket,
   type TicketStatus,
   type TicketTier,
@@ -122,8 +124,53 @@ function TicketRow({
   );
 }
 
+const MEDALS = ["\u{1F947}", "\u{1F948}", "\u{1F949}"];
+
+function LeaderboardView({ adminKey }: { adminKey: string }) {
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getLeaderboard(adminKey)
+      .then(setEntries)
+      .catch((err) => setError("Could not load leaderboard: " + err.message))
+      .finally(() => setLoading(false));
+  }, [adminKey]);
+
+  if (loading) return <div className="loading">Loading...</div>;
+  if (error) return <div className="error-banner">{error}</div>;
+  if (entries.length === 0) return <p className="empty">No resolved, tiered tickets yet.</p>;
+
+  return (
+    <table className="ticket-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Assignee</th>
+          <th>Tickets Resolved</th>
+          <th>Total Points</th>
+          <th>Avg Points / Ticket</th>
+        </tr>
+      </thead>
+      <tbody>
+        {entries.map((entry, i) => (
+          <tr key={entry.assignee}>
+            <td>{MEDALS[i] ?? `#${i + 1}`}</td>
+            <td>{entry.assignee}</td>
+            <td>{entry.ticketsResolved}</td>
+            <td>{entry.totalPoints}</td>
+            <td>{entry.avgPoints}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 export default function App() {
   const [adminKey, setAdminKey] = useState<string | null>(() => sessionStorage.getItem(STORAGE_KEY));
+  const [tab, setTab] = useState<"tickets" | "leaderboard">("tickets");
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -170,7 +217,7 @@ export default function App() {
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <h1>Support Tickets</h1>
+        <h1>{tab === "tickets" ? "Support Tickets" : "Leaderboard"}</h1>
         <button
           type="button"
           className="link-button"
@@ -183,30 +230,51 @@ export default function App() {
         </button>
       </header>
 
-      {error && <div className="error-banner">{error}</div>}
-      {loading && <div className="loading">Loading...</div>}
+      <div className="tabs">
+        <button
+          type="button"
+          className={tab === "tickets" ? "tab active" : "tab"}
+          onClick={() => setTab("tickets")}
+        >
+          Tickets
+        </button>
+        <button
+          type="button"
+          className={tab === "leaderboard" ? "tab active" : "tab"}
+          onClick={() => setTab("leaderboard")}
+        >
+          Leaderboard
+        </button>
+      </div>
 
-      {!loading && tickets.length === 0 && !error && <p className="empty">No tickets yet.</p>}
-
-      {tickets.length > 0 && (
-        <table className="ticket-table">
-          <thead>
-            <tr>
-              <th>Subject</th>
-              <th>App</th>
-              <th>Status</th>
-              <th>Tier</th>
-              <th>Assignee</th>
-              <th>Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tickets.map((ticket) => (
-              <TicketRow key={ticket.id} ticket={ticket} onUpdate={handleUpdate} />
-            ))}
-          </tbody>
-        </table>
+      {tab === "tickets" && (
+        <>
+          {error && <div className="error-banner">{error}</div>}
+          {loading && <div className="loading">Loading...</div>}
+          {!loading && tickets.length === 0 && !error && <p className="empty">No tickets yet.</p>}
+          {tickets.length > 0 && (
+            <table className="ticket-table">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>App</th>
+                  <th>Status</th>
+                  <th>Tier</th>
+                  <th>Assignee</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tickets.map((ticket) => (
+                  <TicketRow key={ticket.id} ticket={ticket} onUpdate={handleUpdate} />
+                ))}
+              </tbody>
+            </table>
+          )}
+        </>
       )}
+
+      {tab === "leaderboard" && <LeaderboardView adminKey={adminKey} />}
     </div>
   );
 }

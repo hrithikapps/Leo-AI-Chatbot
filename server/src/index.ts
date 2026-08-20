@@ -2,7 +2,7 @@ import * as http from "node:http";
 import * as url from "node:url";
 import { addMessage, createConversation, getConversation } from "./conversationService";
 import { listFaqs, searchFaqs } from "./faqService";
-import { createTicket, getTicket, listTickets, updateTicket } from "./ticketService";
+import { createTicket, getLeaderboard, getTicket, listTickets, updateTicket } from "./ticketService";
 import { isValidEmail, sendTicketAssignedEmail } from "./emailService";
 
 const PORT = Number(process.env.PORT ?? 4000);
@@ -199,6 +199,17 @@ const server = http.createServer((req, res) => {
         }
       })
       .catch((err) => sendJson(res, 400, { error: err.message }));
+    return;
+  }
+
+  if (req.method === "GET" && req.url === "/leaderboard") {
+    if (!isAdminAuthorized(req)) {
+      sendJson(res, 401, { error: "unauthorized" });
+      return;
+    }
+    getLeaderboard()
+      .then((leaderboard) => sendJson(res, 200, { leaderboard }))
+      .catch((err) => sendJson(res, 500, { error: err.message }));
     return;
   }
 
