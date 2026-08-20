@@ -23,3 +23,13 @@ create table if not exists faqs (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+create table if not exists tickets (
+  id                uuid primary key default gen_random_uuid(),
+  application_id    text not null,
+  external_user_id  text null,
+  subject           text not null,
+  description       text not null,
+  status            text not null default 'open' check (status in ('open','closed')),
+  created_at        timestamptz not null default now()
+);

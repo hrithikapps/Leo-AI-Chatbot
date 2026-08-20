@@ -2,6 +2,7 @@ import * as http from "node:http";
 import * as url from "node:url";
 import { addMessage, createConversation, getConversation } from "./conversationService";
 import { listFaqs, searchFaqs } from "./faqService";
+import { createTicket, getTicket } from "./ticketService";
 
 const PORT = Number(process.env.PORT ?? 4000);
 
@@ -34,6 +35,7 @@ function sendJson(res: http.ServerResponse, status: number, body: unknown): void
 const UUID_SEGMENT = "[0-9a-f-]+";
 const conversationByIdRoute = new RegExp(`^/conversations/(${UUID_SEGMENT})$`);
 const messagesRoute = new RegExp(`^/conversations/(${UUID_SEGMENT})/messages$`);
+const ticketByIdRoute = new RegExp(`^/tickets/(${UUID_SEGMENT})$`);
 
 const server = http.createServer((req, res) => {
   // Dev-only CORS: Phase 1 demo loads the SDK from a file:// / static origin and
@@ -97,6 +99,47 @@ const server = http.createServer((req, res) => {
         .catch((err) => sendJson(res, 500, { error: err.message }));
       return;
     }
+  }
+
+  if (req.method === "POST" && req.url === "/tickets") {
+    readJsonBody(req)
+      .then(async (body) => {
+        if (!body.applicationId || typeof body.applicationId !== "string") {
+          sendJson(res, 400, { error: "applicationId is required" });
+          return;
+        }
+        if (!body.subject || typeof body.subject !== "string") {
+          sendJson(res, 400, { error: "subject is required" });
+          return;
+        }
+        if (!body.description || typeof body.description !== "string") {
+          sendJson(res, 400, { error: "description is required" });
+          return;
+        }
+        const ticket = await createTicket(
+          body.applicationId,
+          body.externalUserId ?? null,
+          body.subject,
+          body.description
+        );
+        sendJson(res, 201, { ticket });
+      })
+      .catch((err) => sendJson(res, 400, { error: err.message }));
+    return;
+  }
+
+  const ticketMatch = req.url?.match(ticketByIdRoute);
+  if (req.method === "GET" && ticketMatch) {
+    getTicket(ticketMatch[1])
+      .then((ticket) => {
+        if (!ticket) {
+          sendJson(res, 404, { error: "ticket not found" });
+          return;
+        }
+        sendJson(res, 200, { ticket });
+      })
+      .catch((err) => sendJson(res, 500, { error: err.message }));
+    return;
   }
 
   const conversationMatch = req.url?.match(conversationByIdRoute);

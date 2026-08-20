@@ -59,6 +59,19 @@ export function buildPanelSrcDoc(config: LeoAIChatbotConfig): string {
   .composer button { font-size: 13px; padding: 8px 14px; border: none; border-radius: 6px; background: #c9701f; color: #fff; cursor: pointer; }
   .composer button:disabled { background: #98a2b3; cursor: not-allowed; }
   .chat-view { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+  .form-field { padding: 10px 14px; }
+  .form-field label { display: block; font-size: 12px; font-weight: 700; color: #667085; margin-bottom: 4px; }
+  .form-field input, .form-field textarea { width: 100%; font-size: 13px; padding: 8px 10px; border: 1px solid #d0d5dd; border-radius: 6px; font-family: inherit; resize: vertical; }
+  .form-actions { padding: 6px 14px 14px; }
+  .form-actions button { width: 100%; font-size: 13px; padding: 10px; border: none; border-radius: 6px; background: #c9701f; color: #fff; cursor: pointer; font-weight: 600; }
+  .form-actions button:disabled { background: #98a2b3; cursor: not-allowed; }
+  .form-error { padding: 0 14px 10px; font-size: 12px; color: #dc2626; }
+  .ticket-confirm { padding: 20px 14px; text-align: center; }
+  .ticket-confirm .big { font-size: 32px; }
+  .ticket-confirm h2 { font-size: 15px; margin: 10px 0 4px; }
+  .ticket-confirm p { font-size: 12px; color: #667085; margin: 0 0 2px; }
+  .ticket-confirm code { font-size: 11px; background: #f2f4f7; padding: 2px 6px; border-radius: 4px; }
 </style>
 </head>
 <body>
@@ -112,8 +125,8 @@ export function buildPanelSrcDoc(config: LeoAIChatbotConfig): string {
       messageTitle.className = "card-title";
       messageTitle.textContent = "Message Us";
       messageCard.appendChild(messageTitle);
-      messageCard.appendChild(buildRow("support", "S", "Support", function () { renderChat("support"); }));
-      messageCard.appendChild(buildRow("ai", "I", "Interactive AI", function () { renderChat("ai"); }));
+      messageCard.appendChild(buildRow("support", "S", "Support", function () { renderTicketForm(); }));
+      messageCard.appendChild(buildRow("ai", "I", "Interactive AI", function () { renderChat(); }));
       content.appendChild(messageCard);
 
       var faqCard = document.createElement("div");
@@ -240,13 +253,13 @@ export function buildPanelSrcDoc(config: LeoAIChatbotConfig): string {
       app.appendChild(content);
     }
 
-    function renderChat(topic) {
+    function renderChat() {
       app.innerHTML = "";
       app.style.display = "flex";
       app.style.flexDirection = "column";
       app.style.height = "100%";
 
-      app.appendChild(renderHeader(topic === "support" ? "Support" : "Interactive AI", true, goHome));
+      app.appendChild(renderHeader("Interactive AI", true, goHome));
 
       var chatView = document.createElement("div");
       chatView.className = "chat-view";
@@ -290,7 +303,7 @@ export function buildPanelSrcDoc(config: LeoAIChatbotConfig): string {
       fetch(apiUrl("/conversations"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ applicationId: config.application + ":" + topic, externalUserId: config.externalUserId })
+        body: JSON.stringify({ applicationId: config.application + ":ai", externalUserId: config.externalUserId })
       })
         .then(function (res) {
           if (!res.ok) throw new Error("status " + res.status);
@@ -335,6 +348,127 @@ export function buildPanelSrcDoc(config: LeoAIChatbotConfig): string {
             inputEl.focus();
           });
       });
+    }
+
+    function renderTicketForm() {
+      app.innerHTML = "";
+      app.appendChild(renderHeader("Support", true, goHome));
+
+      var content = document.createElement("div");
+      content.className = "content";
+      var card = document.createElement("div");
+      card.className = "card";
+
+      var form = document.createElement("form");
+
+      var subjectField = document.createElement("div");
+      subjectField.className = "form-field";
+      var subjectLabel = document.createElement("label");
+      subjectLabel.textContent = "Subject";
+      var subjectInput = document.createElement("input");
+      subjectInput.type = "text";
+      subjectInput.placeholder = "Short summary of the issue";
+      subjectField.appendChild(subjectLabel);
+      subjectField.appendChild(subjectInput);
+
+      var descField = document.createElement("div");
+      descField.className = "form-field";
+      var descLabel = document.createElement("label");
+      descLabel.textContent = "Describe the issue";
+      var descInput = document.createElement("textarea");
+      descInput.rows = 4;
+      descInput.placeholder = "What happened, and what were you trying to do?";
+      descField.appendChild(descLabel);
+      descField.appendChild(descInput);
+
+      var errorEl = document.createElement("div");
+      errorEl.className = "form-error";
+
+      var actions = document.createElement("div");
+      actions.className = "form-actions";
+      var submitBtn = document.createElement("button");
+      submitBtn.type = "submit";
+      submitBtn.textContent = "Create ticket";
+      actions.appendChild(submitBtn);
+
+      form.appendChild(subjectField);
+      form.appendChild(descField);
+      form.appendChild(errorEl);
+      form.appendChild(actions);
+      card.appendChild(form);
+      content.appendChild(card);
+      app.appendChild(content);
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var subject = subjectInput.value.trim();
+        var description = descInput.value.trim();
+        errorEl.textContent = "";
+
+        if (!subject || !description) {
+          errorEl.textContent = "Please fill in both fields.";
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting...";
+
+        fetch(apiUrl("/tickets"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            applicationId: config.application,
+            externalUserId: config.externalUserId,
+            subject: subject,
+            description: description
+          })
+        })
+          .then(function (res) {
+            if (!res.ok) throw new Error("status " + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            renderTicketConfirmation(data.ticket);
+          })
+          .catch(function (err) {
+            errorEl.textContent = "Could not create ticket: " + err.message;
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Create ticket";
+          });
+      });
+    }
+
+    function renderTicketConfirmation(ticket) {
+      app.innerHTML = "";
+      app.appendChild(renderHeader("Support", true, goHome));
+
+      var content = document.createElement("div");
+      content.className = "content";
+      var card = document.createElement("div");
+      card.className = "card ticket-confirm";
+
+      var big = document.createElement("div");
+      big.className = "big";
+      big.textContent = "\\u2705";
+
+      var heading = document.createElement("h2");
+      heading.textContent = "Ticket created";
+
+      var subjectP = document.createElement("p");
+      subjectP.textContent = ticket.subject;
+
+      var idP = document.createElement("p");
+      var idCode = document.createElement("code");
+      idCode.textContent = ticket.id;
+      idP.appendChild(document.createTextNode("Reference: "));
+      idP.appendChild(idCode);
+
+      card.appendChild(big);
+      card.appendChild(heading);
+      card.appendChild(subjectP);
+      card.appendChild(idP);
+      content.appendChild(card);
+      app.appendChild(content);
     }
 
     renderHome();

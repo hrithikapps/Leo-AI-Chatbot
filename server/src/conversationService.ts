@@ -1,4 +1,5 @@
 import { pool } from "./db";
+import { aiService } from "./aiService";
 
 export interface Conversation {
   id: string;
@@ -62,15 +63,6 @@ export async function getConversation(
   };
 }
 
-/**
- * Phase 2: no AIService exists yet, so the "assistant" reply is a fixed,
- * controlled response per docs/PHASE_0_ARCHITECTURE.md §E/§G. Real AI wiring
- * arrives in Phase 4 without changing this route's request/response shape.
- */
-function generateControlledReply(userContent: string): string {
-  return `You said: "${userContent}". (This is a placeholder response — Phase 2 has no AI yet.)`;
-}
-
 export async function addMessage(
   conversationId: string,
   content: string
@@ -78,14 +70,27 @@ export async function addMessage(
   const convResult = await pool.query(`select id from conversations where id = $1`, [conversationId]);
   if (convResult.rows.length === 0) return null;
 
+  const historyResult = await pool.query(
+    `select * from messages where conversation_id = $1 order by created_at asc`,
+    [conversationId]
+  );
+  const history = historyResult.rows.map(toMessage);
+
   const userResult = await pool.query(
     `insert into messages (conversation_id, role, content) values ($1, 'user', $2) returning *`,
     [conversationId, content]
   );
 
+  let replyContent: string;
+  try {
+    replyContent = await aiService.generateReply(history, content);
+  } catch (err) {
+    replyContent = "Sorry, I couldn't generate a response right now. Please try again in a moment.";
+  }
+
   const aiResult = await pool.query(
     `insert into messages (conversation_id, role, content) values ($1, 'assistant', $2) returning *`,
-    [conversationId, generateControlledReply(content)]
+    [conversationId, replyContent]
   );
 
   return {
