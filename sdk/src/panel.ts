@@ -24,9 +24,11 @@ export function buildPanelSrcDoc(config: LeoAIChatbotConfig): string {
   * { box-sizing: border-box; }
   body { font-family: system-ui, sans-serif; margin: 0; padding: 0; color: #1f2d3d; display: flex; flex-direction: column; height: 100vh; background: #f4f5f7; }
 
-  .header { background: linear-gradient(135deg, #f5a94d 0%, #c9701f 60%, #9a4e12 100%); color: #fff; padding: 20px 16px 40px; flex-shrink: 0; }
+  .header { position: relative; background: linear-gradient(135deg, #f5a94d 0%, #c9701f 60%, #9a4e12 100%); color: #fff; padding: 20px 16px 40px; flex-shrink: 0; }
   .header .wordmark { font-size: 20px; font-weight: 800; letter-spacing: 1px; }
   .header .back { background: none; border: none; color: #fff; font-size: 14px; cursor: pointer; padding: 0 0 10px; }
+  .header .close { position: absolute; top: 14px; right: 14px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.15); border: none; border-radius: 999px; color: #fff; font-size: 14px; cursor: pointer; line-height: 1; }
+  .header .close:hover { background: rgba(255,255,255,0.3); }
 
   .content { flex: 1; overflow-y: auto; padding: 0 12px 12px; margin-top: -24px; }
 
@@ -101,6 +103,17 @@ export function buildPanelSrcDoc(config: LeoAIChatbotConfig): string {
       wordmark.className = "wordmark";
       wordmark.textContent = title;
       header.appendChild(wordmark);
+
+      var closeBtn = document.createElement("button");
+      closeBtn.type = "button";
+      closeBtn.className = "close";
+      closeBtn.setAttribute("aria-label", "Close");
+      closeBtn.textContent = "\\u2715";
+      closeBtn.addEventListener("click", function () {
+        window.parent.postMessage({ type: "leo-ai-chatbot:close" }, "*");
+      });
+      header.appendChild(closeBtn);
+
       return header;
     }
 

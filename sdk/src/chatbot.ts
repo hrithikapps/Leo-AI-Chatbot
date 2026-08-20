@@ -9,6 +9,7 @@ interface State {
   launcherEl: HTMLButtonElement;
   panelEl: HTMLIFrameElement;
   isOpen: boolean;
+  onMessage: (event: MessageEvent) => void;
 }
 
 let state: State | null = null;
@@ -66,7 +67,7 @@ export function init(config: LeoAIChatbotConfig): void {
   launcherEl.style.borderRadius = "999px";
   launcherEl.style.border = "none";
   launcherEl.style.padding = "10px 18px";
-  launcherEl.style.background = "#1a56db";
+  launcherEl.style.background = "#c9701f";
   launcherEl.style.color = "#fff";
   launcherEl.style.fontSize = "14px";
   launcherEl.addEventListener("click", () => {
@@ -89,7 +90,14 @@ export function init(config: LeoAIChatbotConfig): void {
   rootEl.appendChild(launcherEl);
   mountPoint.appendChild(rootEl);
 
-  state = { config, rootEl, launcherEl, panelEl, isOpen: false };
+  const onMessage = (event: MessageEvent): void => {
+    if (event.source === panelEl.contentWindow && event.data?.type === "leo-ai-chatbot:close") {
+      close();
+    }
+  };
+  window.addEventListener("message", onMessage);
+
+  state = { config, rootEl, launcherEl, panelEl, isOpen: false, onMessage };
 
   checkBackendHealth(config.backendUrl);
 }
@@ -100,6 +108,7 @@ export function open(): void {
     return;
   }
   state.panelEl.style.display = "block";
+  state.launcherEl.style.display = "none";
   state.isOpen = true;
 }
 
@@ -109,11 +118,13 @@ export function close(): void {
     return;
   }
   state.panelEl.style.display = "none";
+  state.launcherEl.style.display = "inline-block";
   state.isOpen = false;
 }
 
 export function destroy(): void {
   if (!state) return;
+  window.removeEventListener("message", state.onMessage);
   state.rootEl.remove();
   state = null;
 }
