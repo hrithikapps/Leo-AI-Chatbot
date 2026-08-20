@@ -1,14 +1,28 @@
 {
-  "name": "@leo-ai/chatbot-sdk",
+  "name": "@hrithikapps/chatbot-sdk",
   "version": "0.1.0",
-  "description": "LEO AI Chatbot SDK — framework-independent launcher/shell, Phase 1",
-  "main": "dist/leo-ai-chatbot.js",
-  "types": "dist/index.d.ts",
+  "description": "LEO AI Chatbot SDK — framework-independent launcher, chat panel, and FAQ UI",
+  "files": ["dist"],
+  "main": "dist/leo-ai-chatbot.cjs",
+  "module": "dist/leo-ai-chatbot.mjs",
+  "unpkg": "dist/leo-ai-chatbot.js",
+  "types": "dist/leo-ai-chatbot.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/leo-ai-chatbot.d.ts",
+      "import": "./dist/leo-ai-chatbot.mjs",
+      "require": "./dist/leo-ai-chatbot.cjs"
+    }
+  },
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit"
   },
   "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "devDependencies": {
     "typescript": "^5.6.3",
     "tsup": "^8.3.5"

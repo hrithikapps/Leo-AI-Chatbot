@@ -1,16 +1,22 @@
 {
-  "name": "@leo-ai/chatbot-server",
+  "name": "@hrithikapps/chatbot-server",
   "version": "0.1.0",
-  "description": "LEO AI Chatbot backend — Phase 1: health check only",
+  "description": "LEO AI Chatbot backend — Phase 2: conversations + messages",
   "private": true,
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node --env-file=.env dist/index.js",
+    "migrate": "node --env-file=.env dist/migrate.js",
+    "seed:faqs": "node --env-file=.env dist/seedFaqs.js"
   },
   "license": "UNLICENSED",
   "devDependencies": {
-    "typescript": "^5.6.3",
-    "@types/node": "^20.16.11"
+    "@types/node": "^20.16.11",
+    "@types/pg": "^8.23.1",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "pg": "^8.23.0"
   }
 }

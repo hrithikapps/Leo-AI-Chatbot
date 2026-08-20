@@ -76,13 +76,13 @@ export function init(config: LeoAIChatbotConfig): void {
   const panelEl = document.createElement("iframe");
   panelEl.title = "LEO AI Chatbot";
   panelEl.style.display = "none";
-  panelEl.style.width = "320px";
-  panelEl.style.height = "420px";
+  panelEl.style.width = "360px";
+  panelEl.style.height = "540px";
   panelEl.style.border = "1px solid #d0d5dd";
   panelEl.style.borderRadius = "8px";
   panelEl.style.marginBottom = "8px";
   panelEl.style.boxShadow = "0 4px 16px rgba(0,0,0,0.15)";
-  panelEl.setAttribute("sandbox", "allow-scripts");
+  panelEl.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms");
   panelEl.srcdoc = buildPanelSrcDoc(config);
 
   rootEl.appendChild(panelEl);

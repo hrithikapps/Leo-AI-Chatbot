@@ -1,0 +1,7 @@
+[
+  {
+    "question": "Example: How do I reset my password?",
+    "answer": "This is placeholder FAQ content. Replace the entries in this file with real Mojro FAQ content, then run `npm run seed:faqs` to load them into the database.",
+    "category": "example"
+  }
+]
