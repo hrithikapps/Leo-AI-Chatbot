@@ -1,6 +1,6 @@
 {
   "name": "@hrithikapps/chatbot-sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "LEO AI Chatbot SDK — framework-independent launcher, chat panel, and FAQ UI",
   "files": ["dist"],
   "main": "dist/leo-ai-chatbot.cjs",
